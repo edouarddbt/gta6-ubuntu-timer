@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# GTA 6 Countdown CLI Manager
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PYTHON_SCRIPT="$HOME/.local/share/gta6-timer/gta6_indicator.py"
+SERVICE_NAME="gta6-timer.service"
+
+cmd="${1:-status}"
+
+case "$cmd" in
+    start)
+        echo "🚀 Démarrage du timer GTA VI dans la barre du haut..."
+        systemctl --user start "$SERVICE_NAME"
+        sleep 1
+        systemctl --user is-active --quiet "$SERVICE_NAME" && echo "✅ Timer actif dans la barre supérieure !" || echo "❌ Échec du démarrage"
+        ;;
+    stop)
+        echo "🛑 Arrêt du timer GTA VI..."
+        systemctl --user stop "$SERVICE_NAME"
+        echo "✅ Timer arrêté."
+        ;;
+    restart)
+        echo "🔄 Redémarrage du timer..."
+        systemctl --user restart "$SERVICE_NAME"
+        echo "✅ Timer redémarré."
+        ;;
+    status)
+        echo "=== Compte à rebours GTA VI ==="
+        python3 << 'EOF'
+import zoneinfo
+from datetime import datetime
+tz = zoneinfo.ZoneInfo('Europe/Paris')
+target = datetime(2026, 11, 19, 0, 0, 0, tzinfo=tz)
+now = datetime.now(tz)
+sec = int(target.timestamp() - now.timestamp())
+if sec <= 0:
+    print('🎉 GTA VI EST DISPONIBLE !')
+else:
+    days = sec // 86400
+    rem = sec % 86400
+    h = rem // 3600
+    rem = rem % 3600
+    m = rem // 60
+    s = rem % 60
+    sec_formatted = f"{sec:,}".replace(",", " ")
+    print(f"🌴 Temps restant : {days} jours, {h}h {m}m {s}s ({sec_formatted} secondes)")
+    print(f"📅 Date de sortie : 19 Novembre 2026 à 00:00:00 (Paris)")
+EOF
+        echo ""
+        echo "=== État du service ==="
+        systemctl --user status "$SERVICE_NAME" --no-pager || true
+        ;;
+    enable)
+        echo "📌 Activation du lancement automatique au démarrage..."
+        systemctl --user enable "$SERVICE_NAME"
+        echo "✅ Le timer se lancera automatiquement à l'ouverture de session."
+        ;;
+    disable)
+        echo "📌 Désactivation du lancement automatique..."
+        systemctl --user disable "$SERVICE_NAME"
+        echo "✅ Lancement automatique désactivé."
+        ;;
+    run)
+        echo "🎮 Lancement direct au premier plan (Ctrl+C pour quitter)..."
+        exec python3 "$PYTHON_SCRIPT"
+        ;;
+    *)
+        echo "Usage: gta6-timer {start|stop|restart|status|enable|disable|run}"
+        exit 1
+        ;;
+esac
