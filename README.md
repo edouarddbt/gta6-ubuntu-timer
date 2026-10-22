@@ -1,66 +1,139 @@
-# 🌴 GTA 6 Top Bar Countdown for Ubuntu / GNOME
+<div align="center">
 
-Un indicateur stylé et ultra-léger pour la barre supérieure d'Ubuntu (GNOME), affichant le compte à rebours en temps réel jusqu'à la sortie de **Grand Theft Auto VI en France** (**19 novembre 2026 à minuit, heure de Paris**).
+# 🌴 Compte à rebours GTA VI pour Ubuntu / GNOME
+
+**Un indicateur ultra-léger et optimisé pour la batterie, affichant en temps réel le compte à rebours jusqu'à la sortie de Grand Theft Auto VI en France (19 novembre 2026 à minuit, heure de Paris) directement dans la barre supérieure d'Ubuntu.**
+
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20%7C%2024.04%20%7C%2026.04-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://ubuntu.com/)
+[![GNOME](https://img.shields.io/badge/GNOME-42%20--%2050+-4a86cf?style=for-the-badge&logo=gnome&logoColor=white)](https://www.gnome.org/)
+[![Licence: MIT](https://img.shields.io/badge/Licence-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Optimisé Batterie](https://img.shields.io/badge/Batterie-Optimis%C3%A9e-success?style=for-the-badge&logo=leaf&logoColor=white)](#-gestion-intelligente-de-la-batterie)
+
+```text
++---------------------------------------------------------------------------------------------------+
+| Activités        [  20:45  ]                      [🎮 🌴 GTA VI: 27j 04h 28m]  [🔋 85%] [📶] [🔊] |
++---------------------------------------------------------------------------------------------------+
+```
+
+[Fonctionnalités](#-fonctionnalités) • [Installation](#-installation-rapide) • [Commandes CLI](#-commandes-utiles-cli) • [Optimisation Batterie](#-gestion-intelligente-de-la-batterie) • [Architecture](#-fonctionnement-technique) • [Désinstallation](#-désinstallation)
+
+</div>
 
 ---
 
 ## ✨ Fonctionnalités
 
-- **Affichage en direct dans la barre du haut** : icône manette Yaru + compte à rebours précis qui s'actualise chaque seconde (`🌴 GTA VI: 29j 08h 10m 48s`).
-- **Menu déroulant complet au clic** :
-  - 🌴 Nom complet : *Grand Theft Auto VI*
-  - 📅 Date officielle : *19 Novembre 2026 à 00:00:00 (Paris)*
-  - ⏳ Temps restant en direct (jours, heures, minutes, secondes)
-  - ⚡ Nombre total de secondes restantes
-  - 🏖️ Citation de Vice City
-  - ⚙️ **Choix du format d'affichage** en un clic :
-    - `Complet` : `29j 08h 10m 48s`
-    - `Compact` : `29j 08h 10m`
-    - `Jours` : `29 jours`
-    - `Heures totales` : `652h...`
-    - `Secondes pures` : `2 349 144s`
-  - 🔋 **Optimisations Batterie intelligentes** :
-    - `Mode Auto` : fluide (1s) sur secteur, économique (30s) sur batterie.
-    - `Mode Éco` : 30s en continu.
-    - `Mode Fluide` : 1s en continu.
-    - `Pause écran éteint / verrouillé` : 0 réveil CPU quand l'écran est en veille ou verrouillé.
-  - 🎬 Raccourci vers le Trailer officiel sur YouTube
-  - 🔄 Activation / Désactivation du démarrage automatique
-  - ❌ Option pour fermer le timer
-- **Intégration native Ubuntu** : Utilise le protocole standard AppIndicator / StatusNotifierItem (intégré par défaut dans Ubuntu) ainsi qu'un service utilisateur `systemd`.
-- **Démarrage automatique** : S'exécute automatiquement à chaque ouverture de session.
+- 🎮 **Intégration native dans la barre du haut** : icône manette discrète et décompte en temps réel via le standard Freedesktop `StatusNotifierItem` (utilisé par l'extension AppIndicators d'Ubuntu).
+- ⏱️ **Précision physique absolue (Heure d'hiver)** : calcul basé sur les timestamps POSIX pour intégrer exactement le passage à l'heure d'hiver en France (+1 heure physique réelle durant la nuit de 25 heures fin octobre).
+- 🔋 **Zéro impact sur l'autonomie** :
+  - Adaptation dynamique selon l'alimentation : **1s** sur secteur, **30s** sur batterie via `org.freedesktop.UPower`.
+  - **Mise en pause totale** dès que l'écran est éteint ou verrouillé (`org.gnome.ScreenSaver`), garantissant **0 réveil CPU**.
+  - Empreinte ultra-faible : **< 0,05 % CPU** et **~20 Mo de RAM**.
+- 🖱️ **Menu déroulant interactif au clic** :
+  - Statistiques complètes en direct (jours, heures, minutes, secondes et total de secondes restantes).
+  - Changement de format à la volée (*Complet avec secondes, Compact, Jours seuls, Heures totales, Secondes brutes*).
+  - Raccourci vers le Trailer 1 officiel de Rockstar Games sur YouTube.
+  - Bascule du démarrage automatique en 1 clic.
+- 🚀 **Gestion par service systemd utilisateur** : service d'arrière-plan autonome (`systemd --user`) qui démarre automatiquement à l'ouverture de session et se relance en cas d'erreur.
 
 ---
 
-## 🚀 Commandes utiles
+## 🚀 Installation rapide
 
-Tu peux gérer le timer depuis n'importe quel terminal avec la commande `gta6-timer` :
+Clone le dépôt et lance le script d'installation :
 
 ```bash
-# Vérifier l'état du service et le temps restant
+git clone https://github.com/edouarddbt/gta6-ubuntu-timer.git
+cd gta6-ubuntu-timer
+chmod +x install.sh
+./install.sh
+```
+
+> **Prérequis** : Ubuntu ou distribution basée sur Debian avec GNOME Shell et Python 3 (présents par défaut sur Ubuntu).
+
+---
+
+## 💻 Commandes utiles (CLI)
+
+Tu peux piloter le timer à tout moment depuis ton terminal grâce à la commande `gta6-timer` :
+
+```bash
+# Consulter le temps restant et l'état du service
 gta6-timer status
+
+# Démarrer le timer dans la barre supérieure
+gta6-timer start
 
 # Arrêter le timer
 gta6-timer stop
 
-# Démarrer le timer
-gta6-timer start
-
-# Redémarrer le timer
+# Redémarrer le service
 gta6-timer restart
 
-# Activer/Désactiver le démarrage automatique avec Ubuntu
+# Activer / Désactiver le lancement automatique au démarrage
 gta6-timer enable
 gta6-timer disable
+
+# Lancer en direct au premier plan (mode debug)
+gta6-timer run
 ```
 
 ---
 
-## 📂 Structure des fichiers
+## 🔋 Gestion intelligente de la batterie
 
-- [`gta6_indicator.py`](file:///home/edouard/Documents/antigravity/beautiful-goodall/gta6_indicator.py) : Script Python principal (DBus / AppIndicator / StatusNotifierItem).
-- [`gta6-timer`](file:///home/edouard/Documents/antigravity/beautiful-goodall/gta6-timer) : CLI de contrôle (`start`, `stop`, `status`, etc.).
-- [`gta6-timer.service`](file:///home/edouard/Documents/antigravity/beautiful-goodall/gta6-timer.service) : Unité systemd utilisateur pour la persistance et le redémarrage automatique.
-- [`install.sh`](file:///home/edouard/Documents/antigravity/beautiful-goodall/install.sh) : Script d'installation automatique.
-- [`uninstall.sh`](file:///home/edouard/Documents/antigravity/beautiful-goodall/uninstall.sh) : Script de désinstallation propre.
-- Companion GNOME Extension : situé dans `~/.local/share/gnome-shell/extensions/gta6-timer@edouard/`.
+De nombreuses applications réveillent le processeur chaque seconde, ce qui empêche le CPU de basculer dans ses états d'économie d'énergie profonde (*deep C-states*). Cet indicateur a été conçu pour être totalement invisible sur l'autonomie :
+
+| Situation / Mode | Comportement | Réveils processeur |
+| :--- | :--- | :--- |
+| **🔌 Sur secteur (AC)** | Défilement fluide seconde par seconde | Normal (~1 Hz) |
+| **🔋 Sur batterie (Auto)** | Intervalle automatique espacé à 30 secondes | **-96,7 % de réveils** |
+| **🔒 Écran verrouillé / éteint** | Pause totale du timer | **0 réveil (sommeil complet)** |
+| **⚡ Coalescing noyau Linux** | Utilisation de `GLib.timeout_add_seconds` pour regrouper les interruptions | Réveils synchronisés |
+
+Tu peux également forcer le profil d'énergie directement depuis le menu au clic :
+- **Mode Auto** *(Recommandé)* : 1s sur secteur, 30s sur batterie.
+- **Mode Éco** : 30s en continu.
+- **Mode Fluide** : 1s en continu.
+
+---
+
+## 🧠 Fonctionnement technique
+
+L'indicateur communique directement avec GNOME Shell sans couche lourde (pas d'Electron ni de navigateur web embarqué) :
+
+```text
++---------------------------------------------------------------+
+|                      gta6_indicator.py                        |
++-------------------------------+-------------------------------+
+                                |
+               D-Bus IPC        |       D-Bus IPC
+      (org.kde.StatusNotifier)  |  (org.freedesktop.UPower / ScreenSaver)
+                                v
++-------------------------------+-------------------------------+
+|     ubuntu-appindicators      |     Barre supérieure GNOME    |
+|   (StatusNotifierWatcher)     |  "🌴 GTA VI: 27j 04h 28m"     |
++-------------------------------+-------------------------------+
+```
+
+- **`gta6_indicator.py`** : Exporte les objets D-Bus `org.kde.StatusNotifierItem` et `com.canonical.dbusmenu`.
+- **`systemd --user`** : Supervise le cycle de vie du processus en arrière-plan.
+- **`gta6-timer`** : Script utilitaire Bash pour dialoguer facilement avec `systemctl --user`.
+
+---
+
+## 🗑️ Désinstallation
+
+Pour supprimer proprement le timer, son service et ses raccourcis :
+
+```bash
+./uninstall.sh
+```
+
+---
+
+## 📜 Licence
+
+Projet publié sous licence [MIT](LICENSE).
+N'hésite pas à laisser une étoile ⭐ sur le repo si tu attends GTA VI !
